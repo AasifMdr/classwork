@@ -1,29 +1,50 @@
 import 'package:flutter/material.dart';
 
-class SecondHighest extends StatefulWidget {
+void main() => runApp(const SecondHighest());
+
+class SecondHighest extends StatelessWidget {
   const SecondHighest({super.key});
 
   @override
-  _SecondHighestState createState() => _SecondHighestState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Second Highest',
+      home: HomePage(),
+    );
+  }
 }
 
-class _SecondHighestState extends State<SecondHighest> {
-  final TextEditingController _controller = TextEditingController();
-  final List<int> _numbers = [];
-  int _secondHighest = 0;
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
-  void _addNumber() {
-    int? number = int.tryParse(_controller.text);
-    if (number != null) {
-      setState(() {
-        _numbers.add(number);
-        _numbers.sort();
-        if (_numbers.length > 1) {
-          _secondHighest = _numbers[_numbers.length - 2];
-        }
-      });
-      _controller.clear();
-    }
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final TextEditingController _textController = TextEditingController();
+  final List<int> _values = [];
+  String _result = '';
+
+  void _addValue() {
+    setState(() {
+      int? value = int.tryParse(_textController.text);
+      if (value != null) {
+        _values.add(value);
+        _textController.clear();
+      }
+    });
+  }
+
+  void _findSecondHighest() {
+    setState(() {
+      if (_values.length >= 2) {
+        _values.sort();
+        _result = 'Second highest value is ${_values[_values.length - 2]}';
+      } else {
+        _result = 'There are not enough values to find the second highest';
+      }
+    });
   }
 
   @override
@@ -32,25 +53,32 @@ class _SecondHighestState extends State<SecondHighest> {
       appBar: AppBar(
         title: const Text('Second Highest'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             TextField(
-              controller: _controller,
+              controller: _textController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-                hintText: 'Enter a number',
+                hintText: 'Enter an integer value',
+                border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: _addNumber,
-              child: const Text('Add'),
+              onPressed: _addValue,
+              child: const Text('Add Value'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: _findSecondHighest,
+              child: const Text('Find Second Highest'),
+            ),
+            const SizedBox(height: 10),
             Text(
-              'Second highest: $_secondHighest',
+              _result,
               style: const TextStyle(fontSize: 24),
             ),
           ],
